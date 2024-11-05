@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
-import { isEmptyString } from "../helpers/validation/generalValidation";
-import TaskModel from "../modules/tasks/taskModel";
+import { isEmptyString } from "../../helpers/validation/generalValidation.js";
+import TaskModel from "../../modules/tasks/TaskModel.js";
 
 export const createTask = asyncHandler(async (req, res) => {
 
