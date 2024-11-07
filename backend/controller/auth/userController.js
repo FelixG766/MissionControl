@@ -1,8 +1,12 @@
 import asyncHandler from "express-async-handler";
 import UserModel from "../../modules/auth/UserModel.js";
+import TokenModel from "../../modules/auth/TokenModel.js";
 import { isEmptyString } from "../../helpers/validation/generalValidation.js";
 import generateToken from "../../helpers/auth/generateToken.js";
 import bcrypt from "bcrypt";
+import crypto from "node:crypto";
+import { hashToken } from "../../helpers/auth/hashToken.js";
+import sendEmail from "../../helpers/auth/sendEmail.js";
 
 export const registerUser = asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
@@ -157,3 +161,51 @@ export const updateUser = asyncHandler(async (req, res) => {
         res.status(500).json({ message: "An error occurred while updating the user.", error: error.message });
     }
 });
+
+export const verifyEmail = asyncHandler(async (req, res) => {
+    const user = await UserModel.findById(req.user._id);
+
+    if (!user) {
+        return res.status(404).json({ message: "User not found." });
+    }
+
+    if (user.isVerified) {
+        return res.status(400).json({ message: "User already verified." });
+    }
+
+    let token = await TokenModel.findOne({ userId: user._id });
+
+    if (token) {
+        await token.deleteOne();
+    }
+
+    const verificationToken = crypto.randomBytes(64).toString("hex") + user._id;
+
+    const hashedToken = hashToken(verificationToken);
+
+    await new TokenModel({
+        userId: user._id,
+        verificationToken: hashedToken,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
+    }).save();
+
+    const verificationLink = `${process.env.CLIENT_URL}/verify-email/${verificationToken}`;
+
+    const subject = "Email Verification - AuthKit";
+    const send_to = user.email;
+    const reply_to = "noreply@gmail.com";
+    const template = "emailVericiation";
+    const send_from = process.env.USER_EMAIL;
+    const name = user.name;
+    const url = verificationLink;
+
+    try {
+        await sendEmail(subject, send_to, send_from, reply_to, template, name, url);
+        res.status(200).json({ message: "Email sent." })
+    } catch (error) {
+        console.log("Error sending email: ", error);
+        res.status(500).json({ message: "Failed to send email." })
+    }
+
+})
