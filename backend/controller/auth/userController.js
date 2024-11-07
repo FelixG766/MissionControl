@@ -208,4 +208,81 @@ export const verifyEmail = asyncHandler(async (req, res) => {
         res.status(500).json({ message: "Failed to send email." })
     }
 
+});
+
+export const verifyUser = asyncHandler(async (req, res) => {
+    const { verificationToken } = req.params;
+    if (!verificationToken) {
+        return res.status(400).json({ message: "Invalid verification token." });
+    }
+
+    const hashedToken = hashToken(verificationToken);
+
+    const userToken = await TokenModel.findOne({
+        verificationToken: hashedToken,
+        expiresAt: { $gt: Date.now() },
+    });
+
+    if (!userToken) {
+        return res.status(400).json({ message: "Invalid or expired verification token." });
+    }
+
+    const user = await UserModel.findById(userToken.userId);
+    if (user.isVerified) {
+        return res.status(400).json({ message: "User is already verified" });
+    }
+
+    user.isVerified = true;
+    res.status(200).json({ message: "User is verified." });
+});
+
+export const forgotPassword = asyncHandler(async (req, res) => {
+    const { email } = req.body;
+
+    if (!email) {
+        return res.status(400).json({ message: "Email is required." });
+    }
+
+    const user = await UserModel.findOne({ email });
+
+    if (!user) {
+        return res.status(404).json({ message: "User not found!" });
+    }
+
+    const token = await TokenModel.findOne({ userId: user._id });
+
+    if (token) {
+        await token.deleteOne();
+    }
+
+    const passwordResetToken = crypto.randomBytes(64).toString("hex") + user._id;
+
+    const hashedToken = hashToken(passwordResetToken);
+
+    await new TokenModel({
+        userId: user._id,
+        passwordResetToken: hashedToken,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 60 * 60 * 1000,
+    }).save();
+
+    const resetLink = `${process.env.CLIENT_URL}/reset-password/${passwordResetToken}`;
+
+    const subject = "Password Reset - AuthKit";
+    const send_to = user.email;
+    const send_from = USER_EMAIL;
+    const reply_to = "noreply@noreply.com";
+    const template = "fogotPassowrd";
+    const name = user.name;
+    const url = resetLink;
+
+    try {
+        await sendEmail(subject, send_to, send_from, reply_to, template, name, url);
+        res.status(200).json({ meassage: "Email sent." });
+    } catch (error) {
+        console.log("Error sending email: ", error);
+        res.status(400).json({ message: "Failed to send email." });
+    }
+
+
 })
