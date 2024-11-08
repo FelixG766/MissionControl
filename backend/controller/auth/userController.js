@@ -284,5 +284,59 @@ export const forgotPassword = asyncHandler(async (req, res) => {
         res.status(400).json({ message: "Failed to send email." });
     }
 
-
 })
+
+export const resetPassword = asyncHandler(async (req, res) => {
+    const { resetPassowrdToken } = req.params;
+    const { password } = req.body;
+
+    const hashedToken = hashToken(resetPassowrdToken);
+
+    const userToken = await TokenModel.findOne({
+        passwordResetToken: hashedToken,
+        expiresAt: { $gt: Date.now() },
+    });
+
+    if (!userToken) {
+        return res.status(400).json({ message: "Invalid or expired reset token" });
+    }
+
+    const user = await UserModel.findById(userToken.userId);
+
+    if (!user) {
+        return res.status(404).json({ message: "User not found." });
+    }
+
+    user.password = password;
+
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successfully." });
+
+});
+
+export const changePassword = asyncHandler(async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+        return res.status(400).json({ message: "All fields are required." });
+    }
+
+    const user = await UserModel.findById(req.user._id);
+
+    if (!user) {
+        return res.status(400).json({ message: "User not found" });
+    }
+
+    const isMatch = bcrypt.compare(password, currentPassword);
+
+    if (!isMatch) {
+        return res.status(400).json({ message: "Invalid password." });
+    }
+
+    user.password = newPassword;
+    user.save();
+    res.status(200).json({ message: "Password changed successfully." });
+})
+
+
