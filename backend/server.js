@@ -17,7 +17,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Enable Cross-Origin Resource Sharing (CORS) for allowing requests from other origins
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true
+}));
 
 // Middleware to parse cookies attached to the client request
 app.use(cookieParser());
