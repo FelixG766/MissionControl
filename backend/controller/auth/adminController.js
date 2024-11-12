@@ -32,7 +32,7 @@ export const getUserLoginStatus = asyncHandler(async (req, res) => {
     const token = req.cookies.token;
 
     if (!token) {
-        return res.status(401).json({ message: "User not authroised. Please login." });
+        return res.status(401).json(false);
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);

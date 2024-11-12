@@ -7,17 +7,16 @@ import axios from 'axios';
 const UserContext = createContext();
 
 export const AppUserProvider = ({ children }) => {
+
     const serverUrl = "http://localhost:8000"
-
     const router = useRouter();
-
     const [user, setUser] = useState(null);
     const [userState, setUserState] = useState({
         name: "",
         email: "",
         password: ""
     });
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
 
     const registerUser = async (e) => {
         e.preventDefault();
@@ -40,7 +39,7 @@ export const AppUserProvider = ({ children }) => {
             console.log("Failed to register user.", error);
             toast.error(error.message);
         }
-    }
+    };
 
     const loginUser = async (e) => {
         e.preventDefault();
@@ -53,6 +52,7 @@ export const AppUserProvider = ({ children }) => {
             });
 
             toast.success("User logged in successfully.");
+            await getUser();
             setUserState({
                 email: "",
                 password: "",
@@ -63,6 +63,64 @@ export const AppUserProvider = ({ children }) => {
             console.log("Error loging in user.", error);
             toast.error(error.response.data.message);
         }
+    };
+
+    const logoutUser = async () => {
+        try {
+            await axios.get(`${serverUrl}/api/v1/logout`, {
+                withCredentials: true,
+            })
+            toast.success("User logged out successfully.");
+            router.push("/login");
+        } catch (error) {
+            console.log("Failed to log out user.", error);
+            toast.error(error.response.data.message);
+        }
+    };
+
+    const getUser = async () => {
+        setLoading(true);
+        try {
+            const res = await axios.get(`${serverUrl}/api/v1/user`, {
+                withCredentials: true
+            });
+            setUser((prevState) => {
+                return {
+                    ...prevState,
+                    ...res.data,
+                }
+            });
+        } catch (error) {
+            console.log("Error getting user details", error);
+            toast.error(error.response.data.message);
+        }
+        setLoading(false);
+    };
+
+    const updateUser = async (e, data) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            const res = await axios.patch(`${serverUrl}/api/v1/user`, data, {
+                withCredentials: true
+            });
+
+            setUser((prev) => {
+                return {
+                    ...prev,
+                    ...res.data,
+                };
+            });
+
+            toast.success("User update successfully.");
+
+        } catch (error) {
+            console.log("Failed to update user.", error);
+            toast.error(error.response.data.message);
+        }
+
+        setLoading(false);
     }
 
     const handleUserInput = (name) => (e) => {
@@ -80,35 +138,41 @@ export const AppUserProvider = ({ children }) => {
                 withCredentials: true
             });
             loggedIn = !!res.data;
-            setLoading(false);
-            if(!loggedIn){
-                router.push("/login");
-            }
         } catch (error) {
-            console.log("Falied to obtain user status.", error);
+            if (!error.response || error.response.status !== 200) {
+                loggedIn = false;
+            }
+            console.log("Falied to obtain user status.", error.message);
+        } finally{
+            setLoading(false);
+        }
+        if (!loggedIn) {
+            router.push("/login");
         }
         return loggedIn;
-    }
+    };
 
-    const logoutUser = async () => {
-        try{
-            await axios.get(`${serverUrl}/api/v1/logout`, {
-                withCredentials: true,
-            })
-            toast.success("User logged out successfully.");
-            router.push("/login");
-        }catch(error){
-            console.log("Failed to log out user.", error);
-            toast.error(error.response.data.message);
+
+
+    useEffect(() => {
+        const initialiseUserAfterLogin = async () => {
+            const isLoggedIn = await getUserLoginStatus();
+            if (isLoggedIn) {
+                await getUser();
+            }
         }
-    }
+        initialiseUserAfterLogin();
+    }, [])
 
     return (
         <UserContext.Provider value={{
             registerUser,
             loginUser,
             logoutUser,
+            getUser,
+            updateUser,
             getUserLoginStatus,
+            user,
             userState,
             handleUserInput,
         }}>
