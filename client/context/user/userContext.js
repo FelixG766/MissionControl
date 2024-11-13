@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 
@@ -10,6 +10,7 @@ export const AppUserProvider = ({ children }) => {
 
     const serverUrl = "http://localhost:8000"
     const router = useRouter();
+
     const [user, setUser] = useState(null);
     const [userState, setUserState] = useState({
         name: "",
@@ -143,7 +144,7 @@ export const AppUserProvider = ({ children }) => {
                 loggedIn = false;
             }
             console.log("Falied to obtain user status.", error.message);
-        } finally{
+        } finally {
             setLoading(false);
         }
         if (!loggedIn) {
@@ -152,7 +153,44 @@ export const AppUserProvider = ({ children }) => {
         return loggedIn;
     };
 
+    const verifyEmail = async () => {
+        setLoading(true);
+        try {
+            await axios.post(`${serverUrl}/api/v1/verify-email`,
+                {},
+                {
+                    withCredentials: true
+                });
+            toast.success("Email verification successfully.");
+        } catch (error) {
+            console.log("Failed to verify email.", error);
+            toast.error(error.response.data.message);
+        }
+        setLoading(false);
+    }
 
+    const verifyUser = async (token) => {
+        setLoading(true);
+        try {
+            await axios.post(`${serverUrl}/api/v1/verify-user/${token}`,
+                {},
+                {
+                    withCredentials: true
+
+                }
+            );
+
+            toast.success("User verification successfully.");
+            await getUser();
+            setLoading(false);
+            router.push("/");
+        } catch (error) {
+            console.log("Failed to verify user.", error);
+            toast.error(error.response.data.message);
+            setLoading(false);
+        }
+        
+    }
 
     useEffect(() => {
         const initialiseUserAfterLogin = async () => {
@@ -166,14 +204,16 @@ export const AppUserProvider = ({ children }) => {
 
     return (
         <UserContext.Provider value={{
+            user,
+            userState,
             registerUser,
             loginUser,
             logoutUser,
             getUser,
             updateUser,
             getUserLoginStatus,
-            user,
-            userState,
+            verifyEmail,
+            verifyUser,
             handleUserInput,
         }}>
             {children}

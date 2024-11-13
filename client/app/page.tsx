@@ -8,11 +8,11 @@ export default function Home() {
 
   useRedirect("/login");
 
-  const { logoutUser, user, handleUserInput, updateUser, userState } = useUserContext();
-  if (!user) { return null; }
-
-  const { name, photo, isVerified, bio } = user;
+  const { logoutUser, verifyEmail, user, handleUserInput, updateUser, userState } = useUserContext();
   const [isOpen, setIsOpen] = useState(false);
+  if (!user) { return null; }
+  const { name, photo, isVerified, bio } = user;
+
 
   const myToggle = () => {
     setIsOpen(!isOpen);
@@ -32,6 +32,7 @@ export default function Home() {
           />
           {!isVerified && (
             <button
+              onClick={verifyEmail}
               className="px-4 py-2 bg-blue-500 text-white rounded-md"
             >
               Verify
