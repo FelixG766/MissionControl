@@ -3,8 +3,11 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { withCoalescedInvoke } from 'next/dist/lib/coalesced-function';
 
 const UserContext = createContext();
+
+axios.defaults.withCredentials = true;
 
 export const AppUserProvider = ({ children }) => {
 
@@ -12,6 +15,7 @@ export const AppUserProvider = ({ children }) => {
     const router = useRouter();
 
     const [user, setUser] = useState(null);
+    const [allUsers, setAllUsers] = useState([]);
     const [userState, setUserState] = useState({
         name: "",
         email: "",
@@ -98,6 +102,22 @@ export const AppUserProvider = ({ children }) => {
         setLoading(false);
     };
 
+    const getAllUser = async () => {
+        setLoading(true);
+        try {
+            const res = await axios.get(`${serverUrl}/api/v1/admin/user/list`, {},
+                {
+                    withCredentials: true
+                }
+            );
+            setAllUsers(res.data);
+        } catch (error) {
+            console.log("Failed to get all users.", error);
+            toast.error(error.response.data.message);
+        }
+        setLoading(false);
+    }
+
     const updateUser = async (e, data) => {
         e.preventDefault();
         setLoading(true);
@@ -121,6 +141,23 @@ export const AppUserProvider = ({ children }) => {
             toast.error(error.response.data.message);
         }
 
+        setLoading(false);
+    }
+
+    const deleteUser = async (id) => {
+        setLoading(true);
+        try {
+            await axios.delete(`${serverUrl}/api/v1/admin/user/${id}`,
+                {},
+                {
+                    withCredentials: true
+                });
+            toast.success("User deleted successfully.");
+            await getAllUser();
+        } catch (error) {
+            console.log("Failed to delete user.", error);
+            toast.error(error.response.data.message);
+        }
         setLoading(false);
     }
 
@@ -207,6 +244,48 @@ export const AppUserProvider = ({ children }) => {
         setLoading(false);
     }
 
+    const resetPassword = async (token, password) => {
+
+        setLoading(true);
+
+        try {
+            await axios.post(`${serverUrl}/api/v1/reset-password/${token}`,
+                {
+                    password
+                },
+                {
+                    withCredentials: true
+                }
+            )
+            toast.success("Password reset successfully.");
+            setLoading(false);
+            router.push("/login");
+        } catch (error) {
+            console.log("Failed to reset password.", error);
+            toast.error(error.response.data.message);
+            setLoading(false);
+        }
+    }
+
+    const changePassword = async (password, newPassword) => {
+        setLoading(true);
+        try {
+            await axios.patch(`${serverUrl}/api/v1/change-password`,
+                {
+                    password,
+                    newPassword
+                },
+                {
+                    withCredentials: true
+                });
+            toast.success("Change password successfully.");
+        } catch (error) {
+            console.log("Failed to change password.", error);
+            toast.error(error.response.data.message);
+        }
+        setLoading(false);
+    }
+
     useEffect(() => {
         const initialiseUserAfterLogin = async () => {
             const isLoggedIn = await getUserLoginStatus();
@@ -217,17 +296,28 @@ export const AppUserProvider = ({ children }) => {
         initialiseUserAfterLogin();
     }, [])
 
+    useEffect(() => {
+        if (user && user.role === "admin") {
+            console.log("logged as an admin.")
+            getAllUser();
+        }
+    }, [user])
+
     return (
         <UserContext.Provider value={{
             user,
             userState,
+            allUsers,
             registerUser,
             loginUser,
             logoutUser,
             getUser,
             updateUser,
+            deleteUser,
             getUserLoginStatus,
             forgotPassword,
+            resetPassword,
+            changePassword,
             verifyEmail,
             verifyUser,
             handleUserInput,

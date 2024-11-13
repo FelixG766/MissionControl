@@ -3,12 +3,13 @@
 import { useUserContext } from "@/context/user/userContext";
 import useRedirect from "@/hooks/useRedirect";
 import { useState } from "react";
+import ChangePasswordForm from "./component/auth/ChangePasswordForm/ChangePasswordForm";
 
 export default function Home() {
 
   useRedirect("/login");
 
-  const { logoutUser, verifyEmail, user, handleUserInput, updateUser, userState } = useUserContext();
+  const { logoutUser, verifyEmail, user, handleUserInput, updateUser, userState, allUsers, deleteUser } = useUserContext();
   const [isOpen, setIsOpen] = useState(false);
   if (!user) { return null; }
   const { name, photo, isVerified, bio } = user;
@@ -26,7 +27,7 @@ export default function Home() {
         </h1>
         <div className="flex items-center gap-4">
           <img
-            src={photo}
+            src={photo || "https://user-images.githubusercontent.com/36547915/97088991-45da5d00-1652-11eb-900f-80d106540f4f.png"}
             alt={name}
             className="w-[40px] h-[40px] rounded-full"
           />
@@ -79,6 +80,37 @@ export default function Home() {
           </form>
         }
       </section>
+      <div className="mt-4 flex gap-8">
+        <div className="flex-1">
+          <ChangePasswordForm />
+        </div>
+        <div className="flex-1">
+          {user && user.role === "admin" && (
+            <ul>
+              {allUsers.map((userRecord: any) => (
+                (!user || userRecord._id !== user._id) && (
+                  <li
+                    key={userRecord._id}
+                    className="mb-2 px-2 py-3 border grid grid-cols-4 items-center gap-4"
+                  >
+                    <img
+                      src={userRecord.photo || "https://user-images.githubusercontent.com/36547915/97088991-45da5d00-1652-11eb-900f-80d106540f4f.png"}
+                      alt={userRecord.name}
+                      className="w-[40px] h-[40px] rounded-full" />
+                    <p>{userRecord.name}</p>
+                    <p>{userRecord.bio}</p>
+                    <button
+                      className="bg-red-500 text-white p-2 rounded-md"
+                      onClick={() => deleteUser(userRecord._id)}
+                    >
+                      Delete
+                    </button>
+                  </li>
+                )))}
+            </ul>
+          )}
+        </div>
+      </div>
     </main >
   )
 }
