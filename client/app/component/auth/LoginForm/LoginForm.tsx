@@ -57,7 +57,7 @@ function LoginForm() {
             </div>
             <div className="mt-4 flex justify-end">
                 <a
-                    href="/forgot-passowrd"
+                    href="/forgot-password"
                     className="font-bold text-[#2ECC71] text-[14px] hover:text-[#7263F3] transition-all duration-300"
                 >
                     Forgot password?

@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { redirect, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 
@@ -147,9 +147,6 @@ export const AppUserProvider = ({ children }) => {
         } finally {
             setLoading(false);
         }
-        if (!loggedIn) {
-            router.push("/login");
-        }
         return loggedIn;
     };
 
@@ -189,7 +186,25 @@ export const AppUserProvider = ({ children }) => {
             toast.error(error.response.data.message);
             setLoading(false);
         }
-        
+
+    }
+
+    const forgotPassword = async (email) => {
+        setLoading(true);
+        try {
+            const res = await axios.post(`${serverUrl}/api/v1/forgot-password`,
+                {
+                    email
+                },
+                {
+                    withCredentials: true
+                });
+            toast.success("Forgot email has been sent.");
+        } catch (error) {
+            console.log("Failed to sent forgot email.", error);
+            toast.error(error.response.data.message);
+        }
+        setLoading(false);
     }
 
     useEffect(() => {
@@ -212,6 +227,7 @@ export const AppUserProvider = ({ children }) => {
             getUser,
             updateUser,
             getUserLoginStatus,
+            forgotPassword,
             verifyEmail,
             verifyUser,
             handleUserInput,

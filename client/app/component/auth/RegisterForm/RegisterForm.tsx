@@ -8,7 +8,7 @@ function RegisterForm() {
     const [showPassword, setShowPassword] = React.useState(false);
 
     const togglePassword = () => setShowPassword(!showPassword);
-
+    
     return (
         <form className="m-[2rem] px-10 py-14 rounded-lg bg-white w-full max-w-[520px]">
             <div className="relative z-10">
