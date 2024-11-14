@@ -1,19 +1,17 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "./globals.css";
-import UserContextProvider from "@/providers/auth/userContextProvider";
+import UserContextProvider from "@/providers/auth/UserContextProvider";
 import { Toaster } from "react-hot-toast";
+import { Inter } from "next/font/google";
+import Header from "./component/Header/Header";
+import MiniSideBar from "./component/MiniSideBar/MiniSideBar";
+import MiniSideBarProvider from "@/providers/MiniSideBarProvider";
+import MainContentLayoutProvider from "@/providers/MainContentLayoutProvider";
+import MainLayoutProvider from "@/providers/MainLayoutProvider";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+const inter = Inter({
+  subsets: ["latin",]
+})
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -35,11 +33,22 @@ export default function RootLayout({
           referrerPolicy="no-referrer" />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={inter.className}
       >
         <Toaster position="top-center" />
-        <UserContextProvider>{children}</UserContextProvider>
+        <UserContextProvider>
+          <div className="h-full flex overflow-hidden">
+            <MiniSideBar />
+            <div className="flex-1 flex flex-col">
+              <Header />
+              <MainContentLayoutProvider>
+                <MainLayoutProvider>{children}</MainLayoutProvider>
+                <MiniSideBarProvider />
+              </MainContentLayoutProvider>
+            </div>
+          </div>
+        </UserContextProvider>
       </body>
-    </html>
+    </html >
   );
 }
