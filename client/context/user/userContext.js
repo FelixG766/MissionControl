@@ -3,7 +3,6 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import { withCoalescedInvoke } from 'next/dist/lib/coalesced-function';
 
 const UserContext = createContext();
 
@@ -298,7 +297,6 @@ export const AppUserProvider = ({ children }) => {
 
     useEffect(() => {
         if (user && user.role === "admin") {
-            console.log("logged as an admin.")
             getAllUser();
         }
     }, [user])

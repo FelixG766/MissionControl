@@ -35,7 +35,7 @@ export const getUserLoginStatus = asyncHandler(async (req, res) => {
 
     // If no token is found, respond with 401 (Unauthorized) and `false`
     if (!token) {
-        return res.status(401).json(false);
+        return res.status(200).json(false);
     }
 
     // Verify the token using the JWT_SECRET from the environment variables
@@ -43,7 +43,7 @@ export const getUserLoginStatus = asyncHandler(async (req, res) => {
 
     // If the token is invalid or decoding fails, respond with 401 (Unauthorized) and `false`
     if (!decoded) {
-        return res.status(401).json(false);
+        return res.status(200).json(false);
     }
 
     // If the token is valid, respond with 200 (OK) and `true`
