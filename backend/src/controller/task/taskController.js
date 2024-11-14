@@ -5,18 +5,19 @@ import TaskModel from "../../modules/tasks/TaskModel.js";
 export const createTask = asyncHandler(async (req, res) => {
 
     try {
-        const { title, description, dueDate, completed, priority, status } = req.body;
+        const { title, description, dueDate, priority, status } = req.body;
 
         if (isEmptyString(title)) {
-            res.status(400).json({ message: "Title is required" });
-        }
-
-        if (isEmptyString(description)) {
-            res.status(400).json({ message: "Description is required" });
+            return res.status(400).json({ message: "Title is required" });
         }
 
         const task = new TaskModel({
-            title, description, dueDate, completed, priority, status, user: req.user._id,
+            title,
+            description,
+            dueDate,
+            priority,
+            status,
+            user: req.user._id,
         })
 
         await task.save();
@@ -31,7 +32,7 @@ export const createTask = asyncHandler(async (req, res) => {
 
 export const getTasks = asyncHandler(async (req, res) => {
     try {
-        const userId = req.user_id;
+        const userId = req.user._id;
 
         if (!userId) {
             res.status(400).json({ message: "User not found" });
@@ -51,7 +52,7 @@ export const getTasks = asyncHandler(async (req, res) => {
 
 export const getTask = asyncHandler(async (req, res) => {
     try {
-        const userId = req.user_id;
+        const userId = req.user._id;
         const { id } = req.params;
 
         if (!id) {
@@ -78,7 +79,7 @@ export const getTask = asyncHandler(async (req, res) => {
 export const updateTask = asyncHandler(async (req, res) => {
 
     try {
-        const userId = req.user_id;
+        const userId = req.user._id;
 
         const { id } = req.params;
 
@@ -94,12 +95,12 @@ export const updateTask = asyncHandler(async (req, res) => {
             res.status(400).json({ message: "Not authorised." });
         }
 
-        if (title !== undefined) task.title = title;
-        if (description !== undefined) task.description = description;
-        if (dueDate !== undefined) task.dueDate = dueDate;
-        if (priority !== undefined) task.priority = priority;
-        if (status !== undefined) task.status = status;
-        if (completed !== undefined) task.completed = completed;
+        task.title = title || task.title;
+        task.description = description || task.description;
+        task.dueDate = dueDate || task.dueDate;
+        task.priority = priority || task.priority;
+        task.status = status || task.status;
+        task.completed = completed || task.completed;
 
         await task.save();
         res.status(200).json(task);
@@ -111,9 +112,9 @@ export const updateTask = asyncHandler(async (req, res) => {
 });
 
 export const deleteTask = asyncHandler(async (req, res) => {
-    try{
+    try {
 
-        const userId = req.user_id;
+        const userId = req.user._id;
 
         const { id } = req.params;
 
@@ -128,8 +129,8 @@ export const deleteTask = asyncHandler(async (req, res) => {
         }
 
         await TaskModel.findByIdAndDelete(id);
-        
-    }catch(error){
+
+    } catch (error) {
         res.status(400).json({ meassage: `Error in deleting task. Error: ${error.message}` });
     }
 });

@@ -16,14 +16,19 @@ const TaskSchema = new mongoose.Schema(
             type: Date,
             default: Date.now(),
         },
+        status: {
+            type: String,
+            enum: ["active", "inactive"],
+            default: "active",
+        },
+        completed: {
+            type: Boolean,
+            default: false,
+        },
         priority: {
             type: String,
             enum: ["low", "medium", "high"],
             default: "low",
-        },
-        status: {
-            type: Boolean,
-            default: false,
         },
         user: {
             type: mongoose.Schema.ObjectId,
@@ -31,7 +36,7 @@ const TaskSchema = new mongoose.Schema(
             required: true,
         },
     },
-    { timestamp: true }
+    { timestamps: true }
 );
 
 const TaskModel = mongoose.model("Task", TaskSchema);
