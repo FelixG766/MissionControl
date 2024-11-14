@@ -28,7 +28,7 @@ app.use(cookieParser());
 // Error handling middleware - global
 app.use(errorHandler);
 
-const routeFiles = fs.readdirSync("./routes");
+const routeFiles = fs.readdirSync("./src/routes");
 
 routeFiles.forEach((file) => {
     import(`./routes/${file}`)
