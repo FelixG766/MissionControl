@@ -1,0 +1,13 @@
+export const githubIcon = <i className="fa-brands fa-github"></i>
+export const starIcon = <i className="fas fa-star"></i>;
+export const trashIcon = <i className="fas fa-trash"></i>;
+export const editIcon = <i className="fas fa-edit"></i>;
+export const checkIcon = <i className="fas fa-check"></i>;
+export const timesIcon = <i className="fas fa-times"></i>;
+export const plusIcon = <i className="fas fa-plus"></i>;
+export const sunIcon = <i className="fas fa-sun"></i>;
+export const moonIcon = <i className="fas fa-moon"></i>;
+export const badgeIcon = <i className="fa-solid fa-certificate"></i>;
+export const mailIcon = <i className="fa-regular fa-envelope"></i>;
+export const profileIcon = <i className="fa-solid fa-user"></i>;
+export const homeIcon = <i className="fas fa-home"></i>;

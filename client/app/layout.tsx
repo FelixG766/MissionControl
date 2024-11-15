@@ -5,7 +5,7 @@ import { Toaster } from "react-hot-toast";
 import { Inter } from "next/font/google";
 import Header from "./component/Header/Header";
 import MiniSideBar from "./component/MiniSideBar/MiniSideBar";
-import MiniSideBarProvider from "@/providers/MiniSideBarProvider";
+import SidebarProvider from "@/providers/MiniSideBarProvider";
 import MainContentLayoutProvider from "@/providers/MainContentLayoutProvider";
 import MainLayoutProvider from "@/providers/MainLayoutProvider";
 
@@ -43,7 +43,7 @@ export default function RootLayout({
               <Header />
               <MainContentLayoutProvider>
                 <MainLayoutProvider>{children}</MainLayoutProvider>
-                <MiniSideBarProvider />
+                <SidebarProvider />
               </MainContentLayoutProvider>
             </div>
           </div>

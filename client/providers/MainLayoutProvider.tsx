@@ -6,7 +6,7 @@ interface MainLayoutProviderPros {
 
 function MainLayoutProvider({ children }: MainLayoutProviderPros) {
     return (
-        <div>
+        <div className="main-layout flex-1 bg-[#EDEDED] border-2 border-white rounded-lg overflow-auto">
             {children}
         </div>
     );

@@ -20,7 +20,7 @@ export default function Home() {
   }
 
   return (
-    <main className="py-[2rem] mx-[10rem]">
+    <main className="m-6 h-full">
       <header className="flex justify-between">
         <h1 className="text-[2rem] font-bold">
           Welcome <span className="text-red-600">{name}</span>

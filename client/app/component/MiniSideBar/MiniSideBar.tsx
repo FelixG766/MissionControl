@@ -8,10 +8,14 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import Link from "next/link";
 import DeleteAllIcon from "@/public/icons/DeleteAllIcon";
+import { useUserContext } from "@/context/user/userContext";
 
 const MiniSideBar = () => {
 
     const pathName = usePathname();
+
+    const { user } = useUserContext();
+    if (!user) return;
 
     const getStrokeColor = (link: string) => {
         return pathName === link ? "#3aafae" : "#71717a";
@@ -47,7 +51,7 @@ const MiniSideBar = () => {
                     src="/logo.png"
                     alt="logo"
                     fill
-                    className="p-2 object-contain"
+                    className="p-5 object-contain"
                 />
             </div>
             <div className="mt-8 flex-1 flex flex-col items-center justify-between">
