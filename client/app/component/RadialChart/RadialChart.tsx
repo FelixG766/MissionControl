@@ -31,12 +31,12 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 function RadialChart() {
-  const tasksTotal = 1;
+  const tasksTotal = 100;
 
   const chartData = [
     {
-      pending: 1,
-      completed: 1,
+      pending: 80,
+      completed: 20,
     },
   ];
 
