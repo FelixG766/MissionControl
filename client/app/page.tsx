@@ -4,6 +4,7 @@ import { useUserContext } from "@/context/user/userContext";
 import useRedirect from "@/hooks/useRedirect";
 import { useState } from "react";
 import ChangePasswordForm from "./component/auth/ChangePasswordForm/ChangePasswordForm";
+import { useTasks } from "@/context/task/taskContext";
 
 export default function Home() {
 
