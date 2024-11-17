@@ -52,22 +52,56 @@ export const TasksProvider = ({ children }) => {
         setLoading(false);
     }
 
+    const createTask = async (task) => {
+        setLoading(true);
+        try {
+            const res = await axios.post(`${serverUrl}/task/save`, { task });
+            setTasks([...tasks, res.data]);
+        } catch (error) {
+            console.log("Failed to create task.", error);
+        }
+        setLoading(false);
+    }
 
+    const updateTask = async (task) => {
+        setLoading(true);
+        try {
+            const res = await axios.patch(`${serverUrl}/task/${task._id}`, { task });
+            const newTasks = tasks.map((t) => (t._id === res.data._id ? res.data : t));
+            setTasks(newTasks);
+        } catch (error) {
+            console.log("Failed to update task", error);
+        }
+        setLoading(false);
+    }
+
+    const deleteTask = async (taskId) => {
+        setLoading(true);
+        try {
+            await axios.delete(`${serverUrl}/task/${taskId}`);
+            const newTasks = tasks.map((task) => task._id !== taskId);
+            setTasks(newTasks);
+        } catch (error) {
+            console.log("Failed to delete task.", error);
+        }
+        setLoading(false);
+    }
 
     useEffect(() => {
 
         getTasks();
 
-        getTask();
-
     }, [userId]);
 
-
-
-
-
     return (
-        <TasksContext.Provider value={{ tasks }}>
+        <TasksContext.Provider value={{
+            tasks,
+            getTask,
+            getTasks,
+            createTask,
+            updateTask,
+            deleteTask
+        }}>
             {children}
         </TasksContext.Provider>
     );
