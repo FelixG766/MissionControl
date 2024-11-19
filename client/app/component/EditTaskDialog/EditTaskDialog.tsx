@@ -25,6 +25,7 @@ const EditTaskDialog = () => {
         } else {
             createTask(task);
         }
+        closeEditTaskForm();
     }
 
     return (

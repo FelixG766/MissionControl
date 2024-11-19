@@ -15,6 +15,7 @@ export const TasksProvider = ({ children }) => {
     }
 
     const [tasks, setTasks] = useState([]);
+    const [filteredTasks, setFilteredTasks] = useState([]);
     const [loading, setLoading] = useState(false);
     const [task, setTask] = useState(defaulTask);
     const { user } = useUserContext();
@@ -22,6 +23,8 @@ export const TasksProvider = ({ children }) => {
 
     const [showEditTaskForm, setShowEditTaskForm] = useState(false);
     const [editTaskDialogType, setEditTaskDialogType] = useState();
+    const [activeTasksCount, setActiveTasksCount] = useState(0);
+    const [completedTasksCount, setCompletedTasksCount] = useState(0);
 
     const userId = user ? user._id : null;
 
@@ -79,9 +82,10 @@ export const TasksProvider = ({ children }) => {
     const updateTask = async (task) => {
         setLoading(true);
         try {
-            const res = await axios.patch(`${serverUrl}/task/${task._id}`, { task });
+            const res = await axios.patch(`${serverUrl}/task/${task._id}`, task);
             const newTasks = tasks.map((t) => (t._id === res.data._id ? res.data : t));
             setTasks(newTasks);
+            toast.success("Task updated successfully.");
         } catch (error) {
             console.log("Failed to update task", error);
         }
@@ -125,17 +129,31 @@ export const TasksProvider = ({ children }) => {
     }
 
     useEffect(() => {
+        setActiveTasksCount(tasks.filter((task) => !task.completed).length);
+        setCompletedTasksCount(tasks.filter((task) => task.completed).length);
+    }, [tasks])
 
+    useEffect(() => {
         if (userId) {
             getTasks();
         }
-
     }, [userId]);
+
+    useEffect(() => {
+        if (priority === "All") {
+            setFilteredTasks(tasks);
+        } else {
+            setFilteredTasks(tasks.filter((task) => task.priority.toLowerCase() === priority.toLowerCase()));
+        }
+    }, [tasks, priority]);
+
+
 
     return (
         <TasksContext.Provider value={{
             task,
             tasks,
+            filteredTasks,
             getTask,
             getTasks,
             createTask,
@@ -148,7 +166,9 @@ export const TasksProvider = ({ children }) => {
             showCreateTaskDialog,
             showUpdateTaskDialog,
             closeEditTaskForm,
-            editTaskDialogType
+            editTaskDialogType,
+            completedTasksCount,
+            activeTasksCount
         }}>
             {children}
         </TasksContext.Provider>

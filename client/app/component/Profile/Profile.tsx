@@ -1,4 +1,5 @@
 "use client"
+import { useTasks } from "@/context/task/taskContext";
 import { useUserContext } from "@/context/user/userContext";
 import Image from "next/image";
 import React from "react"
@@ -6,12 +7,12 @@ import React from "react"
 const Profile = () => {
     const { user } = useUserContext();
     if (!user) return null;
+    const { tasks, activeTasksCount, completedTasksCount } = useTasks();
 
     const taskData = [
-        { label: "Total Tasks", value: 10, color: "bg-purple-500" },
-        { label: "In Progress", value: 10, color: "bg-[#3AAFAE]" },
-        { label: "Open Tasks", value: 10, color: "bg-orange-400" },
-        { label: "Completed", value: 10, color: "bg-green-400" },
+        { label: "Total Tasks", value: tasks.length, color: "bg-purple-500" },
+        { label: "In Progress", value: activeTasksCount, color: "bg-[#3AAFAE]" },
+        { label: "Completed", value: completedTasksCount, color: "bg-green-400" },
     ];
 
     return (

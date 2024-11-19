@@ -16,27 +16,33 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { useTasks } from "@/context/task/taskContext";
 
 export const description = "A radial chart with stacked sections";
 
 const chartConfig = {
   desktop: {
-    label: "Completed",
+    label: "Active",
     color: "#8BCE89",
   },
   mobile: {
-    label: "Pending",
+    label: "Completed",
     color: "#EB4E31",
   },
 } satisfies ChartConfig;
 
 function RadialChart() {
-  const tasksTotal = 100;
+
+  const { tasks, completedTasksCount, activeTasksCount } = useTasks();
+
+  const tasksTotal = tasks.length;
+
+  console.log(tasks, activeTasksCount, completedTasksCount);
 
   const chartData = [
     {
-      pending: 80,
-      completed: 20,
+      active: activeTasksCount,
+      completed: completedTasksCount,
     },
   ];
 
@@ -88,14 +94,14 @@ function RadialChart() {
               />
             </PolarRadiusAxis>
             <RadialBar
-              dataKey="completed"
+              dataKey="active"
               stackId="a"
               cornerRadius={5}
               fill="var(--color-desktop)"
               className="stroke-transparent stroke-2"
             />
             <RadialBar
-              dataKey="pending"
+              dataKey="completed"
               fill="var(--color-mobile)"
               stackId="a"
               cornerRadius={5}
