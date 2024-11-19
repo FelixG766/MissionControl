@@ -14,10 +14,10 @@ const Header = () => {
         <header className="px-6 my-4 w-full flex items-center justify-between bg-[#f9f9f9]">
             <div className="">
                 <h1 className="text-lg font-medium">
+                    {user._id ? `Welcome, ${user.name}.` : "Welcome to Mission Control."}
                     <span role="img" aria-label="wave">
                         👋
                     </span>
-                    {user._id ? `Welcome, ${user.name}.` : "Welcome to Mission Control."}
                 </h1>
                 <p className="text-sm">
                     {user._id ? (

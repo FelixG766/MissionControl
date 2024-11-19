@@ -26,7 +26,6 @@ export const protect = asyncHandler(async (req, res, next) => {
 
 // Admin middleware
 export const adminMiddleware = asyncHandler(async (req, res, next) => {
-    console.log("adminMd", req.user.role);
     if (!req.user || req.user.role !== "admin") {
         return res.status(403).json({ message: "User doesn't have authorisation." });
     }
@@ -34,7 +33,6 @@ export const adminMiddleware = asyncHandler(async (req, res, next) => {
 })
 
 export const creatorMiddleware = asyncHandler(async (req, res, next) => {
-    console.log("creatorMD", req.user.role);
     if (!req.user || (req.user.role !== "admin" && req.user.role !== "creator")) {
         return res.status(403).json({ message: "User doesn't have authorisation." });
     }

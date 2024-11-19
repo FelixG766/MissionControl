@@ -9,7 +9,7 @@ interface MainContentLayoutProps {
 function MainContentLayoutProvider({ children }: MainContentLayoutProps) {
 
     return (
-        <main className={`flex h-full`}>
+        <main className={"pb-[1.5rem] flex h-full"}>
             {children}
         </main>
     );

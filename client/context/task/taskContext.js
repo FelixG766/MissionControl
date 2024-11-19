@@ -2,15 +2,28 @@
 import axios from "axios";
 import React, { createContext, useEffect, useState } from "react";
 import { useUserContext } from "../user/userContext";
+import toast from "react-hot-toast";
 
 const TasksContext = createContext();
 
 export const TasksProvider = ({ children }) => {
 
+    const defaulTask = {
+        priority: "low",
+        completed: "false",
+        dueDate: new Date().toISOString().split('T')[0],
+    }
+
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [task, setTask] = useState(null);
-    const userId = useUserContext().user._id;
+    const [task, setTask] = useState(defaulTask);
+    const { user } = useUserContext();
+    const [priority, setPriority] = useState("All");
+
+    const [showEditTaskForm, setShowEditTaskForm] = useState(false);
+    const [editTaskDialogType, setEditTaskDialogType] = useState();
+
+    const userId = user ? user._id : null;
 
     const serverUrl = "http://localhost:8000/api/v1";
 
@@ -21,8 +34,7 @@ export const TasksProvider = ({ children }) => {
         try {
 
             const res = await axios.get(`${serverUrl}/tasks`);
-
-            setTasks(res.data);
+            setTasks(res.data.tasks);
 
         } catch (error) {
 
@@ -55,8 +67,9 @@ export const TasksProvider = ({ children }) => {
     const createTask = async (task) => {
         setLoading(true);
         try {
-            const res = await axios.post(`${serverUrl}/task/save`, { task });
+            const res = await axios.post(`${serverUrl}/task/save`, task);
             setTasks([...tasks, res.data]);
+            toast.success("Task created successfully.");
         } catch (error) {
             console.log("Failed to create task.", error);
         }
@@ -87,20 +100,55 @@ export const TasksProvider = ({ children }) => {
         setLoading(false);
     }
 
+    const handleInput = (name) => (e) => {
+        if (name === "setTask") {
+            setTask(e);
+        } else {
+            setTask({ ...task, [name]: e.target.value });
+        }
+    }
+
+    const showCreateTaskDialog = () => {
+        setTask(defaulTask);
+        setShowEditTaskForm(true);
+    }
+
+    const showUpdateTaskDialog = () => {
+        setEditTaskDialogType("update");
+        console.log(task);
+        setShowEditTaskForm(true);
+    }
+
+    const closeEditTaskForm = () => {
+        setEditTaskDialogType("create");
+        setShowEditTaskForm(false);
+    }
+
     useEffect(() => {
 
-        getTasks();
+        if (userId) {
+            getTasks();
+        }
 
     }, [userId]);
 
     return (
         <TasksContext.Provider value={{
+            task,
             tasks,
             getTask,
             getTasks,
             createTask,
             updateTask,
-            deleteTask
+            deleteTask,
+            priority,
+            setPriority,
+            handleInput,
+            showEditTaskForm,
+            showCreateTaskDialog,
+            showUpdateTaskDialog,
+            closeEditTaskForm,
+            editTaskDialogType
         }}>
             {children}
         </TasksContext.Provider>
