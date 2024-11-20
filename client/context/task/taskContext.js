@@ -12,7 +12,7 @@ export const TasksProvider = ({ children }) => {
     const defaulTask = {
         priority: "low",
         completed: "false",
-        dueDate: new Date().toISOString().split('T')[0],
+        dueDate: new Date().toISOString(),
     }
 
     const [tasks, setTasks] = useState([]);

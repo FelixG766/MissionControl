@@ -75,6 +75,7 @@ export const AppUserProvider = ({ children }) => {
                 withCredentials: true,
             })
             toast.success("User logged out successfully.");
+            setUser(null);
             router.push("/login");
         } catch (error) {
             console.log("Failed to log out user.", error);
