@@ -2,7 +2,7 @@ import { useTasks } from "@/context/task/taskContext";
 import React, { useState } from "react";
 
 const Filter = () => {
-    const { priority, setPriority } = useTasks();
+    const { priorityFilter, setPriorityFilter } = useTasks();
     const priorities = ["All", "Low", "Medium", "High"];
     const [activeIndex, setActiveIndex] = useState(0);
 
@@ -20,9 +20,9 @@ const Filter = () => {
             {priorities.map((p, i) => (
                 <button
                     key={i}
-                    className={`relative px-1 z-10 font-medium text-sm ${priority === p ? "text-[#3aafae]" : "text-gray-500"}`}
+                    className={`relative px-1 z-10 font-medium text-sm ${priorityFilter.toLowerCase() === p ? "text-[#3aafae]" : "text-gray-500"}`}
                     onClick={() => {
-                        setPriority(p);
+                        setPriorityFilter(p);
                         setActiveIndex(i);
                     }}>
                     {p}

@@ -41,6 +41,7 @@ const EditTaskDialog = () => {
                         className="bg-[#F9F9F9] p-2 rounded-md border"
                         type="text"
                         placeholder="Task Title"
+                        id="title"
                         name="title"
                         value={task.title}
                         onChange={(e) => handleInput("title")(e)}
@@ -50,6 +51,7 @@ const EditTaskDialog = () => {
                     <label htmlFor="description">Description</label>
                     <textarea
                         className="bg-[#F9F9F9] p-2 rounded-md border resize-none"
+                        id="description"
                         name="description"
                         placeholder="Task Description"
                         rows={4}
@@ -61,6 +63,7 @@ const EditTaskDialog = () => {
                     <label htmlFor="priority">Priority</label>
                     <select
                         className="bg-[#F9F9F9] p-2 rounded-md border cursor-pointer"
+                        id="priority"
                         name="priority"
                         value={task.priority}
                         onChange={(e) => handleInput("priority")(e)}
@@ -75,6 +78,7 @@ const EditTaskDialog = () => {
                     <input
                         className="bg-[#F9F9F9] p-2 rounded-md border"
                         type="date"
+                        id="dueDate"
                         name="dueDate"
                         value={task.dueDate}
                         onChange={(e) => handleInput("dueDate")(e)}
@@ -84,6 +88,7 @@ const EditTaskDialog = () => {
                     <label htmlFor="completed">Completed</label>
                     <select
                         className="bg-[#F9F9F9] p-2 rounded-md border cursor-pointer"
+                        id="completed"
                         name="completed"
                         value={task.completed}
                         onChange={(e) => handleInput("completed")(e)}

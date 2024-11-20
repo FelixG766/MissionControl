@@ -1,9 +1,7 @@
 "use client";
 
-import { useUserContext } from "@/context/user/userContext";
 import useRedirect from "@/hooks/useRedirect";
-import { useState } from "react";
-import ChangePasswordForm from "./component/auth/ChangePasswordForm/ChangePasswordForm";
+import { useEffect } from "react";
 import { useTasks } from "@/context/task/taskContext";
 import Filter from "./component/Filter/Filter";
 import TaskItem from "./component/TaskItem/TaskItem";
@@ -13,7 +11,11 @@ export default function Home() {
 
   useRedirect("/login");
 
-  const { filteredTasks, showCreateTaskDialog } = useTasks();
+  const { setMiniBarOptionFilter, filteredTasks, showCreateTaskDialog } = useTasks();
+
+  useEffect(() => {
+    setMiniBarOptionFilter("All");
+  }, [setMiniBarOptionFilter]);
 
   return (
     <main className="m-6 h-full overflow-auto">

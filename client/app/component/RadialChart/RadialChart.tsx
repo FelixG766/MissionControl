@@ -37,8 +37,6 @@ function RadialChart() {
 
   const tasksTotal = tasks.length;
 
-  console.log(tasks, activeTasksCount, completedTasksCount);
-
   const chartData = [
     {
       active: activeTasksCount,

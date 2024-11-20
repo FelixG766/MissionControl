@@ -1,8 +1,9 @@
 "use client"
 import axios from "axios";
-import React, { createContext, useEffect, useState } from "react";
+import React, { createContext, useEffect, useMemo, useState } from "react";
 import { useUserContext } from "../user/userContext";
 import toast from "react-hot-toast";
+import { filterByPriority, filterByMiniBarOption, getTaskCounts } from "@/utils/utilities";
 
 const TasksContext = createContext();
 
@@ -19,7 +20,8 @@ export const TasksProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [task, setTask] = useState(defaulTask);
     const { user } = useUserContext();
-    const [priority, setPriority] = useState("All");
+    const [priorityFilter, setPriorityFilter] = useState("All");
+    const [miniBarOptionFilter, setMiniBarOptionFilter] = useState("All");
 
     const [showEditTaskForm, setShowEditTaskForm] = useState(false);
     const [editTaskDialogType, setEditTaskDialogType] = useState();
@@ -119,7 +121,6 @@ export const TasksProvider = ({ children }) => {
 
     const showUpdateTaskDialog = () => {
         setEditTaskDialogType("update");
-        console.log(task);
         setShowEditTaskForm(true);
     }
 
@@ -129,25 +130,28 @@ export const TasksProvider = ({ children }) => {
     }
 
     useEffect(() => {
-        setActiveTasksCount(tasks.filter((task) => !task.completed).length);
-        setCompletedTasksCount(tasks.filter((task) => task.completed).length);
-    }, [tasks])
-
-    useEffect(() => {
         if (userId) {
             getTasks();
         }
     }, [userId]);
 
     useEffect(() => {
-        if (priority === "All") {
-            setFilteredTasks(tasks);
-        } else {
-            setFilteredTasks(tasks.filter((task) => task.priority.toLowerCase() === priority.toLowerCase()));
-        }
-    }, [tasks, priority]);
+        const { activeTasksCountVal, completedTasksCountVal } = getTaskCounts(tasks);
+        setActiveTasksCount(activeTasksCountVal);
+        setCompletedTasksCount(completedTasksCountVal);
+    }, [tasks]);
 
+    const filteredTasksByStatusCache = useMemo(() => {
+        return filterByMiniBarOption(tasks, miniBarOptionFilter);
+    }, [tasks, miniBarOptionFilter])
 
+    const filteredTasksByPriorityCache = useMemo(() => {
+        return filterByPriority(filteredTasksByStatusCache, priorityFilter);
+    }, [filteredTasksByStatusCache, priorityFilter])
+
+    useEffect(() => {
+        setFilteredTasks(filteredTasksByPriorityCache);
+    }, [filteredTasksByPriorityCache]);
 
     return (
         <TasksContext.Provider value={{
@@ -159,8 +163,9 @@ export const TasksProvider = ({ children }) => {
             createTask,
             updateTask,
             deleteTask,
-            priority,
-            setPriority,
+            priorityFilter,
+            setPriorityFilter,
+            setMiniBarOptionFilter,
             handleInput,
             showEditTaskForm,
             showCreateTaskDialog,

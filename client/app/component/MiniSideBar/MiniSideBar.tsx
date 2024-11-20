@@ -1,5 +1,4 @@
 "use client"
-import CheckIcon from "@/public/icons/CheckIcon";
 import FileCheckIcon from "@/public/icons/FileCheckIcon";
 import GridIcon from "@/public/icons/GridIcon";
 import StopWatchIcon from "@/public/icons/StopWatchIcon";
@@ -31,11 +30,6 @@ const MiniSideBar = () => {
             icon: <FileCheckIcon strokeColor={getStrokeColor("/completed")} />,
             title: "Completed",
             link: "/completed"
-        },
-        {
-            icon: <CheckIcon strokeColor={getStrokeColor("/pending")} />,
-            title: "Pending",
-            link: "/pending"
         },
         {
             icon: <StopWatchIcon strokeColor={getStrokeColor("/overdue")} />,
