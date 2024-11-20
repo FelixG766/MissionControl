@@ -7,7 +7,7 @@ import React from "react"
 const Profile = () => {
     const { user } = useUserContext();
     if (!user) return null;
-    const { tasks, activeTasksCount, completedTasksCount } = useTasks();
+    const { tasks, activeTasksCount, completedTasksCount, showEditProfileDialog } = useTasks();
 
     const taskData = [
         { label: "Total Tasks", value: tasks.length, color: "bg-purple-500" },
@@ -17,7 +17,9 @@ const Profile = () => {
 
     return (
         <div className="m-6">
-            <div className="px-2 py-4 flex items-center gap-3 bg-[#E6E6E6]/20 rounded-[0.08rem]
+            <div
+                onClick={showEditProfileDialog}
+                className="px-2 py-4 flex items-center gap-3 bg-[#E6E6E6]/20 rounded-[0.08rem]
             hover:bg-[#E6E6E6]/50 transition duration-300 ease-in-out cursor-pointer border-2 border-transparent hover:border-2 hover:border-white">
                 <div>
                     <Image

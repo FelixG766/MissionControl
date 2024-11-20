@@ -28,6 +28,8 @@ export const TasksProvider = ({ children }) => {
     const [activeTasksCount, setActiveTasksCount] = useState(0);
     const [completedTasksCount, setCompletedTasksCount] = useState(0);
 
+    const [showEditProfileForm, setShowEditProfileForm] = useState(false);
+
     const userId = user ? user._id : null;
 
     const serverUrl = "http://localhost:8000/api/v1";
@@ -116,6 +118,7 @@ export const TasksProvider = ({ children }) => {
 
     const showCreateTaskDialog = () => {
         setTask(defaulTask);
+        setEditTaskDialogType("create");
         setShowEditTaskForm(true);
     }
 
@@ -125,8 +128,15 @@ export const TasksProvider = ({ children }) => {
     }
 
     const closeEditTaskForm = () => {
-        setEditTaskDialogType("create");
         setShowEditTaskForm(false);
+    }
+
+    const showEditProfileDialog = () => {
+        setShowEditProfileForm(true);
+    }
+
+    const closeEditProfileForm =() => {
+        setShowEditProfileForm(false);
     }
 
     useEffect(() => {
@@ -173,7 +183,10 @@ export const TasksProvider = ({ children }) => {
             closeEditTaskForm,
             editTaskDialogType,
             completedTasksCount,
-            activeTasksCount
+            activeTasksCount,
+            showEditProfileForm,
+            showEditProfileDialog,
+            closeEditProfileForm
         }}>
             {children}
         </TasksContext.Provider>

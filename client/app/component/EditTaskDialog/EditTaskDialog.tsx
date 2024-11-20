@@ -80,7 +80,7 @@ const EditTaskDialog = () => {
                         type="date"
                         id="dueDate"
                         name="dueDate"
-                        value={task.dueDate}
+                        value={task.dueDate.split('T')[0]}
                         onChange={(e) => handleInput("dueDate")(e)}
                     />
                 </div>
