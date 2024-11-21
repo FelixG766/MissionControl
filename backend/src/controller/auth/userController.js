@@ -45,8 +45,8 @@ export const registerUser = asyncHandler(async (req, res) => {
         path: "/",
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
         httpOnly: true,
-        sameSite: "strict",
-        secure: process.env.NODE_ENV === "production", // Secure cookies in production only
+        sameSite: "none",
+        secure: true
     };
 
     res.cookie("token", token, cookieOptions);
@@ -121,7 +121,12 @@ export const loginUser = asyncHandler(async (req, res) => {
 });
 
 export const logoutUser = asyncHandler(async (req, res) => {
-    res.clearCookie("token");
+    res.clearCookie("token", {
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+        path: "/"
+    });
     res.status(200).json({ message: "User logged out." });
 });
 

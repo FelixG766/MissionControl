@@ -15,7 +15,7 @@ const Sidebar = () => {
             <RadialChart />
             <button
                 onClick={logoutUser}
-                className="mx-6 mt-auto py-4 px-8 bg-red-600 text-white rounded-[50rem]"
+                className="m-6 mt-auto py-4 px-8 bg-red-600 text-white rounded-[50rem]"
             >
                 Log Out
             </button>
