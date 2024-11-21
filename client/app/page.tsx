@@ -11,10 +11,11 @@ export default function Home() {
 
   useRedirect("/login");
 
-  const { setMiniBarOptionFilter, filteredTasks, showCreateTaskDialog } = useTasks();
+  const { setPriorityFilter, setMiniBarOptionFilter, filteredTasks, showCreateTaskDialog } = useTasks();
 
   useEffect(() => {
     setMiniBarOptionFilter("All");
+    setPriorityFilter("All");
   }, [setMiniBarOptionFilter]);
 
   return (

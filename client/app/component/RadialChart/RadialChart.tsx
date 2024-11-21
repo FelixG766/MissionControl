@@ -45,7 +45,7 @@ function RadialChart() {
   ];
 
   return (
-    <Card className="flex flex-col border-2 border-white shadow-none bg-[#EDEDED]">
+    <Card className="m-6 flex flex-col border-2 border-white shadow-none bg-[#EDEDED]">
       <CardHeader className="items-center pb-0">
         <CardTitle>Progress Summary</CardTitle>
         <CardDescription>Task completion status.</CardDescription>

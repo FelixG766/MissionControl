@@ -3,6 +3,7 @@ import React from "react"
 import Profile from "../Profile/Profile";
 import { useUserContext } from "@/context/user/userContext";
 import RadialChart from "../RadialChart/RadialChart";
+import TaskStatDashboard from "../TaskStatDashboard/TaskStatDashboard";
 
 const Sidebar = () => {
     const { user, logoutUser } = useUserContext();
@@ -10,12 +11,11 @@ const Sidebar = () => {
     return (
         <div className="w-[20rem] h-[calc(100%-5rem)] bg-[#f9f9f9] flex flex-col overflow-auto">
             <Profile />
-            <div className="mt-4 mx-6">
-                <RadialChart />
-            </div>
-            <button 
-            onClick={logoutUser}
-            className="mt-auto mb-6 mx-6 py-4 px-8 bg-red-600 text-white rounded-[50rem]"
+            <TaskStatDashboard />
+            <RadialChart />
+            <button
+                onClick={logoutUser}
+                className="mx-6 mt-auto py-4 px-8 bg-red-600 text-white rounded-[50rem]"
             >
                 Log Out
             </button>

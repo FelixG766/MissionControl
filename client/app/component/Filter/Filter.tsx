@@ -20,7 +20,7 @@ const Filter = () => {
             {priorities.map((p, i) => (
                 <button
                     key={i}
-                    className={`relative px-1 z-10 font-medium text-sm ${priorityFilter.toLowerCase() === p ? "text-[#3aafae]" : "text-gray-500"}`}
+                    className={`relative px-1 z-10 font-medium text-sm ${priorityFilter.toLowerCase() === p.toLowerCase() ? "text-[#3aafae]" : "text-gray-500"}`}
                     onClick={() => {
                         setPriorityFilter(p);
                         setActiveIndex(i);
