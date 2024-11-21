@@ -130,6 +130,8 @@ export const deleteTask = asyncHandler(async (req, res) => {
 
         await TaskModel.findByIdAndDelete(id);
 
+        res.status(200).json({});
+
     } catch (error) {
         res.status(400).json({ meassage: `Error in deleting task. Error: ${error.message}` });
     }

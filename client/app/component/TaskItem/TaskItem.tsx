@@ -10,7 +10,7 @@ interface TaskItemProps {
 
 const TaskItem = ({ task }: TaskItemProps) => {
 
-    const { getTask, showUpdateTaskDialog } = useTasks();
+    const { getTask, deleteTask, showUpdateTaskDialog } = useTasks();
 
     const getPriorityColor = (priority: string) => {
         switch (priority) {
@@ -43,7 +43,12 @@ const TaskItem = ({ task }: TaskItemProps) => {
                     >
                         {editIcon}
                     </button>
-                    <button className="text-[#F65314]">{trashIcon}</button>
+                    <button
+                        className="text-[#F65314]"
+                        onClick={() => deleteTask(task._id)}
+                    >
+                        {trashIcon}
+                    </button>
                 </div>
             </div>
         </div>

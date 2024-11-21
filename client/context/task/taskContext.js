@@ -100,13 +100,16 @@ export const TasksProvider = ({ children }) => {
         setLoading(true);
         try {
             await axios.delete(`${serverUrl}/task/${taskId}`);
-            const newTasks = tasks.map((task) => task._id !== taskId);
+            const newTasks = tasks.filter((task) => task._id !== taskId);
             setTasks(newTasks);
+            toast.success("Task deleted successfully");
         } catch (error) {
-            console.log("Failed to delete task.", error);
+            console.error("Failed to delete task:", error);
+            toast.error("Failed to delete the task. Please try again.");
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
-    }
+    };
 
     const handleInput = (name) => (e) => {
         if (name === "setTask") {
