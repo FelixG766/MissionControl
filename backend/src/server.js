@@ -5,6 +5,8 @@ import connect from "./db/connect.js";
 import cookieParser from "cookie-parser";
 import fs from "node:fs";
 import errorHandler from "./helpers/auth/errorHandler.js";
+import swaggerUi from "swagger-ui-express";
+import swaggerDocs from "./docs/swagger.js"
 
 dotenv.config();
 
@@ -27,6 +29,9 @@ app.use(cookieParser());
 
 // Error handling middleware - global
 app.use(errorHandler);
+
+// Middleware for api docs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 const routeFiles = fs.readdirSync("./src/routes");
 
